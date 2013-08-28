@@ -1,0 +1,366 @@
+@ACL1000
+^LAYOUT   ADFile                             1522 D.T,
+dn             ASCII       1 190    
+sAMAccountName ASCII     191  28    
+objectClass    ASCII     219  72    
+displayName    ASCII     291  70    
+givenName      ASCII     361  48    
+SN             ASCII     409  44    
+department     ASCII     453  78    
+description    ASCII     531 294    
+title          ASCII     825 100    
+mail           ASCII     925  88    
+employeeID     ASCII    1013  26    
+employeeNumber ASCII    1039  28    
+userAccountControl ASCII    1067  36    
+pwdLastSet     ASCII    1103 100    
+lastLogonTimestamp ASCII    1203 100    
+accountExpires ASCII    1303  40    
+modifyTimeStamp ASCII    1343  34    
+createTimeStamp ASCII    1377  34    
+extensionAttribute7 ASCII    1411  38    
+extensionAttribute5 ASCII    1449  72    
+Domain         COMPUTED             
+ *C 20 1 
+ ALLTRIM(UPPER(SUBSTRING(SUBSTR(dn, AT(1,"DC=",dn)+3, AT(2,",DC=",dn)-AT(1,"DC=",dn)-3), 1, 20)))
+Country_OU     COMPUTED             
+ *C 5 1 
+ ALLTRIM(UPPER(SUBSTRING(SUBSTR(dn, AT(1,"DC=",dn)-3, 2), 1, 5)))
+Site_OU        COMPUTED             
+ *C 5 1 
+ ALLTRIM(UPPER(SUBSTRING(SUBSTR(dn, AT(1,"DC=",dn)-10, 3), 1, 5)))
+User_Name      COMPUTED             
+ *C 28 1 
+ sAMAccountName
+Employee_ID    COMPUTED             
+ *C 26 1 
+ employeeID
+Descriptions   COMPUTED             
+ *C 100 1 
+ ALLTRIM(SUBSTRING(description, 1, 100))
+WD_Employee    COMPUTED             
+ *C 10 1 
+ ALLTRIM(SUBSTRING(employeeNumber,1,10))
+Display_Name   COMPUTED             
+ *C 70 1 
+ displayName
+First_Name     COMPUTED             
+ *C 48 1 
+ givenName
+Last_Name      COMPUTED             
+ *C 44 1 
+ SN
+Job_Title      COMPUTED             
+ *C 100 1 
+ title
+Email          COMPUTED             
+ *C 88 1 
+ mail
+Password_Last_Changed COMPUTED            WIDTH 27  
+ *D 1 16
+ CTOD(SUBSTR(pwdLastSet,1,AT(1,"-",pwdLastSet)-1),"YYYY/MM/DD")
+Last_Logon_Time_Stamp COMPUTED            WIDTH 27  
+ *D 1 16
+ CTOD(SUBSTR(lastLogonTimestamp,1,AT(1,"-",lastLogonTimestamp)-1),"YYYY/MM/DD")
+Creation_Time_Stamp COMPUTED            WIDTH 27  
+ *D 1 16
+ CTOD(SUBSTR(createTimeStamp,1,8),"YYYYMMDD")
+Modify_Time_Stamp COMPUTED            WIDTH 27  
+ *D 1 16
+ CTOD(SUBSTR(modifyTimeStamp,1,8),"YYYYMMDD")
+Primary_Account_Owner COMPUTED             
+ *C 72 1 
+ extensionAttribute5
+User_Account_Control COMPUTED             COMMENT ***** Account properties *****
+ *C 66 15 
+ "Enabled Account"                                                    IF userAccountControl = "512"
+ "Enabled Account; pswd stored in reversibly encrypted"               IF userAccountControl = "640"
+ "Enabled Account; pswd set to never expire"                          IF userAccountControl = "66048"
+ "Enabled Account; pswd set to never expire; using DES encryption"    IF userAccountControl = "2163200"
+ "Enabled Account; pswd set to never expire; user cannot change pswd" IF userAccountControl = "590336"
+ "Disabled Account"                                                   IF userAccountControl = "514"
+ "Disabled Account, pswd not required"                                IF userAccountControl = "546"
+ "Disabled Account, pswd stored in reversibly encrypted"              IF userAccountControl = "642"
+ "Disabled Account; pswd set to never expire"                         IF userAccountControl = "66050"
+ "System domain Account, pswd not required"                           IF userAccountControl = "2080"
+ "Account that use only Data Encryption Standard (DES)"               IF userAccountControl = "2097664"
+ "Users can delegate resources"                                       IF userAccountControl = "16843264"
+ "No Auth Data Req; pswd never expire; user cannot change pswd"       IF userAccountControl = "6881792"
+ "No Auth Data Req"                                                   IF userAccountControl = "6291968"
+ "Other"
+Custom_Code    COMPUTED             COMMENT ***** Custom Code *****
+ *C 38 2 
+ "N/A" IF extensionAttribute7 = " "
+ extensionAttribute7
+^LAYOUT   ADFile_Clean                       870 D.T,
+Domain         ASCII       1  20    
+Country_OU     ASCII      21   5    
+Site_OU        ASCII      26   5    
+User_Name      ASCII      31  28    
+Display_Name   ASCII      59  70    
+First_Name     ASCII     129  48    
+Last_Name      ASCII     177  44    
+Job_Title      ASCII     221 100    
+department     ASCII     321  78    
+Descriptions   ASCII     399 100    
+Employee_ID    ASCII     499  26    
+WD_Employee    ASCII     525  10    
+Email          ASCII     535  88    
+User_Account_Control ASCII     623  66    COMMENT ***** Account properties *****
+Password_Last_Changed DATETIME  689   8   PICTURE "YYYYMMDD" WIDTH 27  
+Last_Logon_Time_Stamp DATETIME  697   8   PICTURE "YYYYMMDD" WIDTH 27  
+Creation_Time_Stamp DATETIME  705   8   PICTURE "YYYYMMDD" WIDTH 27  
+accountExpires ASCII     713  40    
+Modify_Time_Stamp DATETIME  753   8   PICTURE "YYYYMMDD" WIDTH 27  
+Custom_Code    ASCII     761  38    COMMENT ***** Custom Code *****
+Primary_Account_Owner ASCII     799  72    
+^LAYOUT   Terminated_Employees               28 D.T,
+Employee_Name  ASCII       1  28    
+c_Term_Employee_Name_28 COMPUTED             
+ *C 28 1 
+ SUBSTR(ALLTRIM(Employee_Name), 1, 28)
+^LAYOUT   Active_Term_Join_EName_Active      898 D.T,
+accountExpires ASCII       1  40    
+Country_OU     ASCII      41   5    
+Creation_Time_Stamp DATETIME   46   8   PICTURE "YYYYMMDD" WIDTH 27  
+Custom_Code    ASCII      54  38    COMMENT ***** Custom Code *****
+department     ASCII      92  78    
+Descriptions   ASCII     170 100    
+Display_Name   ASCII     270  70    
+Domain         ASCII     340  20    
+Email          ASCII     360  88    
+Employee_ID    ASCII     448  26    
+First_Name     ASCII     474  48    
+Job_Title      ASCII     522 100    
+Last_Logon_Time_Stamp DATETIME  622   8   PICTURE "YYYYMMDD" WIDTH 27  
+Last_Name      ASCII     630  44    
+Modify_Time_Stamp DATETIME  674   8   PICTURE "YYYYMMDD" WIDTH 27  
+Password_Last_Changed DATETIME  682   8   PICTURE "YYYYMMDD" WIDTH 27  
+Primary_Account_Owner ASCII     690  72    
+Site_OU        ASCII     762   5    
+User_Account_Control ASCII     767  66    COMMENT ***** Account properties *****
+User_Name      ASCII     833  28    
+WD_Employee    ASCII     861  10    
+c_Term_Employee_Name_28 ASCII     871  28    
+^LOGFILE  AD_Terminations                     "" "AD_Terminations.LOG"
+[PARENT_FOLDER_ID] 0
+^FOLDER   Source_Files                        1377669708
+[PARENT_FOLDER_ID] 0
+^FOLDER   AD_Clean_Reports                    1377669709
+[PARENT_FOLDER_ID] 0
+^FOLDER   Results                             1377669771
+[PARENT_FOLDER_ID] 0
+^FOLDER   Scripts                             1377669812
+[PARENT_FOLDER_ID] 0
+^BATCH    Prepare_AD_Data                    
+[PARENT_FOLDER_ID] 1377669812
+COMMENT ***** Normalize the fields in the AD extract, then EXTRACT the feilds to a clean AD table
+OPEN ADFile
+
+
+DELETE FIELD Domain       OK
+DELETE FIELD Country_OU   OK
+DELETE FIELD Site_OU      OK
+DELETE FIELD User_Name    OK
+DELETE FIELD Employee_ID  OK
+DELETE FIELD WD_Employee  OK
+DELETE FIELD Display_Name OK
+DELETE FIELD Descriptions OK
+DELETE FIELD First_Name   OK
+DELETE FIELD Last_Name    OK
+DELETE FIELD Job_Title    OK
+DELETE FIELD Email        OK
+DELETE FIELD Custom_Code  OK
+DELETE FIELD Creation_Time_Stamp   OK
+DELETE FIELD Modify_Time_Stamp     OK
+DELETE FIELD User_Account_Control  OK
+DELETE FIELD Password_Last_Changed OK
+DELETE FIELD Last_Logon_Time_Stamp OK
+DELETE FIELD Primary_Account_Owner OK
+
+
+DEFINE FIELD Domain       COMPUTED ALLTRIM(UPPER(SUBSTRING(SUBSTR(dn, AT(1,"DC=",dn)+3, AT(2,",DC=",dn)-AT(1,"DC=",dn)-3), 1, 20)))
+DEFINE FIELD Country_OU   COMPUTED ALLTRIM(UPPER(SUBSTRING(SUBSTR(dn, AT(1,"DC=",dn)-3, 2), 1, 5)))
+DEFINE FIELD Site_OU      COMPUTED ALLTRIM(UPPER(SUBSTRING(SUBSTR(dn, AT(1,"DC=",dn)-10, 3), 1, 5)))
+DEFINE FIELD User_Name    COMPUTED sAMAccountName
+DEFINE FIELD Employee_ID  COMPUTED employeeID
+DEFINE FIELD Descriptions COMPUTED ALLTRIM(SUBSTRING(description, 1, 100))
+DEFINE FIELD WD_Employee  COMPUTED ALLTRIM(SUBSTRING(employeeNumber,1,10))
+DEFINE FIELD Display_Name COMPUTED displayName
+DEFINE FIELD First_Name   COMPUTED givenName
+DEFINE FIELD Last_Name    COMPUTED SN
+DEFINE FIELD Job_Title    COMPUTED title
+DEFINE FIELD Email        COMPUTED mail
+DEFINE FIELD Password_Last_Changed COMPUTED CTOD(SUBSTR(pwdLastSet,1,AT(1,"-",pwdLastSet)-1),"YYYY/MM/DD")
+DEFINE FIELD Last_Logon_Time_Stamp COMPUTED CTOD(SUBSTR(lastLogonTimestamp,1,AT(1,"-",lastLogonTimestamp)-1),"YYYY/MM/DD")
+DEFINE FIELD Creation_Time_Stamp   COMPUTED CTOD(SUBSTR(createTimeStamp,1,8),"YYYYMMDD")
+DEFINE FIELD Modify_Time_Stamp     COMPUTED CTOD(SUBSTR(modifyTimeStamp,1,8),"YYYYMMDD")
+DEFINE FIELD Primary_Account_Owner COMPUTED extensionAttribute5
+
+DEFINE FIELD User_Account_Control COMPUTED
+COMMENT ***** Account properties *****
+"Enabled Account"                                                    IF userAccountControl = "512"
+"Enabled Account; pswd stored in reversibly encrypted"               IF userAccountControl = "640"
+"Enabled Account; pswd set to never expire"                          IF userAccountControl = "66048"
+"Enabled Account; pswd set to never expire; using DES encryption"    IF userAccountControl = "2163200"
+"Enabled Account; pswd set to never expire; user cannot change pswd" IF userAccountControl = "590336"
+"Disabled Account"                                                   IF userAccountControl = "514"
+"Disabled Account, pswd not required"                                IF userAccountControl = "546"
+"Disabled Account, pswd stored in reversibly encrypted"              IF userAccountControl = "642"
+"Disabled Account; pswd set to never expire"                         IF userAccountControl = "66050"
+"System domain Account, pswd not required"                           IF userAccountControl = "2080"
+"Account that use only Data Encryption Standard (DES)"               IF userAccountControl = "2097664"
+"Users can delegate resources"                                       IF userAccountControl = "16843264"
+"No Auth Data Req; pswd never expire; user cannot change pswd"       IF userAccountControl = "6881792"
+"No Auth Data Req"                                                   IF userAccountControl = "6291968"
+"Other"
+
+DEFINE FIELD Custom_Code COMPUTED
+COMMENT ***** Custom Code *****
+"N/A" IF extensionAttribute7 = " "
+extensionAttribute7
+
+SET FOLDER /AD_Clean_Reports
+
+EXTRACT FIELDS Domain Country_OU Site_OU User_Name Display_Name First_Name Last_Name Job_Title department Descriptions Employee_ID WD_Employee Email User_Account_Control Password_Last_Changed Last_Logon_Time_Stamp Creation_Time_Stamp accountExpires Modify_Time_Stamp Custom_Code Primary_Account_Owner TO "ADFile_Clean.FIL" IF dn <> "dn" AND dn <> ""
+^BATCH    Match_Active_to_Terms              
+[PARENT_FOLDER_ID] 1377669812
+COMMENT ***** Perform a mATCHED JOIn on the harmonized name firel from the HR data
+COMMENT ***** with the AD name field as a key, but only for active (Enabled or Other) employees
+
+OPEN ADFile_Clean         PRIMARY
+OPEN Terminated_Employees SECONDARY
+
+SET FOLDER /Results
+JOIN PKEY User_Name FIELDS accountExpires Country_OU Creation_Time_Stamp Custom_Code department Descriptions Display_Name Domain Email Employee_ID First_Name Job_Title Last_Logon_Time_Stamp Last_Name Modify_Time_Stamp Password_Last_Changed Primary_Account_Owner Site_OU User_Account_Control User_Name WD_Employee SKEY c_Term_Employee_Name_28 WITH c_Term_Employee_Name_28 IF MATCH(User_Account_Control, "Enabled", "Other") TO "Active_Term_Join_EName_Active.FIL" PRESORT SECSORT
+^BATCH    _Main_Script_AD_Terms              
+[PARENT_FOLDER_ID] 1377669812
+COMMENT
+   //ANALYTIC AD_Termination_Testing
+   //FILE Terminated_Employees.xls
+     copy the Terminated_Employees.xls file to the Related Files container before running the analytic
+   //RESULT LOG
+   //RESULT TABLE Active_Term_Join*
+END
+
+COMMENT ***** Thanks to Jorge Costes for creating the Unicode version of this analytic
+COMMENT ***** set up the environment
+SET SAFETY OF
+SET FOLDER /
+SET FILTER
+SET INDEX
+CLOSE PRIMARY
+CLOSE SECONDARY
+DELETE ALL OK
+
+COMMENT ***** Run the AFind executable to gather user account values fro the AD server
+EXECUTE 'cmd /c C:\ACL_Data\AN10\AD_Terminations_NonUnicode\adfind.exe -h AX-Lab.com –b DC=AX-Lab,DC=com -csv -binenc -tdcs -f "objectcategory=person" sAMAccountName objectClass displayName givenName SN department description title mail employeeID employeeNumber userAccountControl pwdLastSet lastLogonTimestamp accountExpires modifyTimeStamp createTimeStamp extensionAttribute7 extensionAttribute5 > ADFile.csv'
+
+COMMENT ***** Import hat AD user metrics file into an ACL table
+SET FOLDER /Source_Files
+IMPORT DELIMITED TO ADFile "ADFile.fil" FROM "ADFile.csv"  0 SEPARATOR "," QUALIFIER '"' CONSECUTIVE STARTLINE 1 KEEPTITLE FIELD "dn" C AT 1 DEC 0 WID 190 PIC "" AS "" FIELD "sAMAccountName" C AT 191 DEC 0 WID 28 PIC "" AS "" FIELD "objectClass" C AT 219 DEC 0 WID 72 PIC "" AS "" FIELD "displayName" C AT 291 DEC 0 WID 70 PIC "" AS "" FIELD "givenName" C AT 361 DEC 0 WID 48 PIC "" AS "" FIELD "SN" C AT 409 DEC 0 WID 44 PIC "" AS "" FIELD "department" C AT 453 DEC 0 WID 78 PIC "" AS "" FIELD "description" C AT 531 DEC 0 WID 294 PIC "" AS "" FIELD "title" C AT 825 DEC 0 WID 100 PIC "" AS "" FIELD "mail" C AT 925 DEC 0 WID 88 PIC "" AS "" FIELD "employeeID" C AT 1013 DEC 0 WID 26 PIC "" AS "" FIELD "employeeNumber" C AT 1039 DEC 0 WID 28 PIC "" AS "" FIELD "userAccountControl" C AT 1067 DEC 0 WID 36 PIC "" AS "" FIELD "pwdLastSet" C AT 1103 DEC 0 WID 100 PIC "" AS "" FIELD "lastLogonTimestamp" C AT 1203 DEC 0 WID 100 PIC "" AS "" FIELD "accountExpires" C AT 1303 DEC 0 WID 40 PIC "" AS "" FIELD "modifyTimeStamp" C AT 1343 DEC 0 WID 34 PIC "" AS "" FIELD "createTimeStamp" C AT 1377 DEC 0 WID 34 PIC "" AS "" FIELD "extensionAttribute7" C AT 1411 DEC 0 WID 38 PIC "" AS "" FIELD "extensionAttribute5" C AT 1449 DEC 0 WID 72 PIC "" AS "" 
+
+SET FOLDER /
+
+DO SCRIPT Prepare_AD_Data
+
+DO SCRIPT Import_Terminated
+
+DO SCRIPT Match_Active_to_Terms
+
+COMMENT ***** Pretty up the view
+OPEN Active_Term_Join_EName_Active
+DEFINE REPORT Default_View 
+DELETE COLUMN Default_View c_Term_Employee_Name_28 OK
+DELETE COLUMN Default_View User_Name               OK
+DELETE COLUMN Default_View User_Account_Control    OK
+DEFINE COLUMN Default_View c_Term_Employee_Name_28 AS "Terminated Employee" POSITION 1
+DEFINE COLUMN Default_View User_Name               AS "User Name"           POSITION 2
+DEFINE COLUMN Default_View User_Account_Control    AS "User Status"         POSITION 3
+
+
+COMMENT ***** Restore the environment
+SET SAFETY ON
+DISPLAY VARIABLES
+^BATCH    Import_Terminated                  
+[PARENT_FOLDER_ID] 1377669812
+COMMENT ***** Import hte list of HR terminated employees and normalize the name field
+COMMENT ***** for matching with the JOIN command
+SET FOLDER /Source_Files
+IMPORT EXCEL TO Terminated_Employees "Terminated_Employees.fil" FROM "Terminated_Employees.xls" TABLE "Sheet1$" KEEPTITLE FIELD "Employee_Name" C WID 28 AS "" 
+
+
+IF FTYPE("c_Term_Employee_Name_28") <> "U" DELETE c_Term_Employee_Name_28 OK 
+DEFINE FIELD c_Term_Employee_Name_28 COMPUTED SUBSTR(ALLTRIM(Employee_Name), 1, 28)
+^FORMAT   ADFile                             ADFile                           "" "ADFile.fil" 0 ASCII 
+[PARENT_FOLDER_ID] 1377669708
+[RETRIEVE] 0
+[REFRESH] DELIMITED "ADFile.fil" FROM "ADFile.csv" 0 SEPARATOR "," QUALIFIER '"' CONSECUTIVE STARTLINE 1 KEEPTITLE FIELD "dn" C AT 1 DEC 0 WID 190 PIC "" AS "" FIELD "sAMAccountName" C AT 191 DEC 0 WID 28 PIC "" AS "" FIELD "objectClass" C AT 219 DEC 0 WID 72 PIC "" AS "" FIELD "displayName" C AT 291 DEC 0 WID 70 PIC "" AS "" FIELD "givenName" C AT 361 DEC 0 WID 48 PIC "" AS "" FIELD "SN" C AT 409 DEC 0 WID 44 PIC "" AS "" FIELD "department" C AT 453 DEC 0 WID 78 PIC "" AS "" FIELD "description" C AT 531 DEC 0 WID 294 PIC "" AS "" FIELD "title" C AT 825 DEC 0 WID 100 PIC "" AS "" FIELD "mail" C AT 925 DEC 0 WID 88 PIC "" AS "" FIELD "employeeID" C AT 1013 DEC 0 WID 26 PIC "" AS "" FIELD "employeeNumber" C AT 1039 DEC 0 WID 28 PIC "" AS "" FIELD "userAccountControl" C AT 1067 DEC 0 WID 36 PIC "" AS "" FIELD "pwdLastSet" C AT 1103 DEC 0 WID 100 PIC "" AS "" FIELD "lastLogonTimestamp" C AT 1203 DEC 0 WID 100 PIC "" AS "" FIELD "accountExpires" C AT 1303 DEC 0 WID 40 PIC "" AS "" FIELD "modifyTimeStamp" C AT 1343 DEC 0 WID 34 PIC "" AS "" FIELD "createTimeStamp" C AT 1377 DEC 0 WID 34 PIC "" AS "" FIELD "extensionAttribute7" C AT 1411 DEC 0 WID 38 PIC "" AS "" FIELD "extensionAttribute5" C AT 1449 DEC 0 WID 72 PIC "" AS "" 
+^FORMAT   ADFile_Clean                       ADFile_Clean                     "" "ADFile_Clean.FIL" 0 ASCII 
+[PARENT_FOLDER_ID] 1377669709
+~.08/28/2013   09:09:18 ADFile EXTRACT FIELDS Domain Country_OU Site_OU User_Name Display_Name First_Name Last_Name Job_Title department Descriptions Employee_ID WD_Employee Email User_Account_Control Password_Last_Changed Last_Logon_Time_Stamp Creation_Time_Stamp accountExpires Modify_Time_Stamp Custom_Code Primary_Account_Owner TO "ADFile_Clean.FIL" IF dn <> "dn" AND dn <> ""
+~Input : Records:28          Control Total:0                    
+~Output: Records:28          Control Total:0                    
+^FORMAT   Terminated_Employees               Terminated_Employees             "" "Terminated_Employees.fil" 0 ASCII 
+[PARENT_FOLDER_ID] 1377669708
+[RETRIEVE] 0
+[REFRESH] EXCEL "Terminated_Employees.fil" FROM "Terminated_Employees.xls" TABLE "Sheet1$" KEEPTITLE FIELD "Employee_Name" C WID 28 AS ""
+^REPORT   Default_View                       Active_Term_Join_EName_Active    D.T,
+[SKIP] 0
+[TLINES] 1
+[RLINES] 1
+[LINE] 1
+c_Term_Employee_Name_28 AS "Terminated Employee" PICTURE ""
+[LINE] 1
+User_Name            AS "User Name" PICTURE ""
+[LINE] 1
+User_Account_Control AS "User Status" PICTURE ""
+[LINE] 1
+accountExpires       PICTURE ""
+[LINE] 1
+Country_OU           WIDTH 10 PICTURE ""
+[LINE] 1
+Creation_Time_Stamp  PICTURE ""
+[LINE] 1
+Custom_Code          PICTURE ""
+[LINE] 1
+department           PICTURE ""
+[LINE] 1
+Descriptions         PICTURE ""
+[LINE] 1
+Display_Name         PICTURE ""
+[LINE] 1
+Domain               PICTURE ""
+[LINE] 1
+Email                PICTURE ""
+[LINE] 1
+Employee_ID          PICTURE ""
+[LINE] 1
+First_Name           PICTURE ""
+[LINE] 1
+Job_Title            PICTURE ""
+[LINE] 1
+Last_Logon_Time_Stamp PICTURE ""
+[LINE] 1
+Last_Name            PICTURE ""
+[LINE] 1
+Modify_Time_Stamp    PICTURE ""
+[LINE] 1
+Password_Last_Changed PICTURE ""
+[LINE] 1
+Primary_Account_Owner PICTURE ""
+[LINE] 1
+Site_OU              WIDTH 7 PICTURE ""
+[LINE] 1
+WD_Employee          WIDTH 11 PICTURE ""
+^FORMAT   Active_Term_Join_EName_Active      Active_Term_Join_EName_Active    "" "Active_Term_Join_EName_Active.FIL" 0 ASCII 
+[PARENT_FOLDER_ID] 1377669771
+~.08/28/2013   09:09:18 ADFile EXTRACT FIELDS Domain Country_OU Site_OU User_Name Display_Name First_Name Last_Name Job_Title department Descriptions Employee_ID WD_Employee Email User_Account_Control Password_Last_Changed Last_Logon_Time_Stamp Creation_Time_Stamp accountExpires Modify_Time_Stamp Custom_Code Primary_Account_Owner TO "ADFile_Clean.FIL" IF dn <> "dn" AND dn <> ""
+~Input : Records:28          Control Total:0                    
+~Output: Records:28          Control Total:0                    
+~.08/28/2013   09:09:18 ADFile_Clean OPEN Terminated_Employees SECONDARY
+~.08/28/2013   09:09:18 ADFile_Clean JOIN PKEY User_Name FIELDS accountExpires Country_OU Creation_Time_Stamp Custom_Code department Descriptions Display_Name Domain Email Employee_ID First_Name Job_Title Last_Logon_Time_Stamp Last_Name Modify_Time_Stamp Password_Last_Changed Primary_Account_Owner Site_OU User_Account_Control User_Name WD_Employee SKEY c_Term_Employee_Name_28 WITH c_Term_Employee_Name_28 IF MATCH(User_Account_Control, "Enabled", "Other") TO "Active_Term_Join_EName_Active.FIL" PRESORT SECSORT
+~Input : Records:28          Control Total:0                    
+~Output: Records:3           Control Total:0                    
+[LASTVIEW] "Default_View"
+^OPEN F "Active_Term_Join_EName_Active"
